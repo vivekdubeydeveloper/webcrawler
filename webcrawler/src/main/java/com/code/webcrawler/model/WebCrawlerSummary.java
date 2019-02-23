@@ -1,8 +1,11 @@
 package com.code.webcrawler.model;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.code.webcrawler.util.JsonUtil;
 
 public class WebCrawlerSummary {
 
@@ -28,6 +31,12 @@ public class WebCrawlerSummary {
 			counter++;
 			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
 		}
+	}
+	
+	public static void writeSummary() {
+		File file=new File("C:\\vivek\\personal\\experiment\\webcrawler\\webcrawlersummary.json");
+		JsonUtil.writeObjectInFile(crawlingSummaryMap, file);
+		
 	}
 	
 }

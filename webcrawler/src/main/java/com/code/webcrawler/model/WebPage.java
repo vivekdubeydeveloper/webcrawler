@@ -48,4 +48,11 @@ public class WebPage {
 		this.images = images;
 	}
 
+	@Override
+	public String toString() {
+		return "WebPage [internalLinks=" + internalLinks + ", externalLinks=" + externalLinks + ", images=" + images
+				+ "]";
+	}
+
+	
 }

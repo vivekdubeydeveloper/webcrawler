@@ -29,6 +29,7 @@ public class WebCrawlerApp {
 		WebCrawlerImpl webC = new WebCrawlerImpl();
 		webC.extractData(url);
 		WebCrawlerSummary.printSummary();
+		WebCrawlerSummary.writeSummary();
 		
 	}
 

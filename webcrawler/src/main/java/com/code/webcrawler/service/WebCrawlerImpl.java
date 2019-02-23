@@ -60,7 +60,7 @@ public class WebCrawlerImpl {
 				String link=page.attr("abs:href");
 				if(!link.equals("")) {
 					extractData(link);
-					if(counter>3)
+					if(counter>10)
 						break;
 				}
 				
