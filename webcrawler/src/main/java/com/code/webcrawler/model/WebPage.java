@@ -1,18 +1,23 @@
 package com.code.webcrawler.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.code.webcrawler.util.InternalUrlUtil;
 
-public class WebPage {
+public class WebPage implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private List<String> internalLinks = new ArrayList<>();
 	private List<String> externalLinks = new ArrayList<>();
 	private List<String> images = new ArrayList<>();
 
 	public void addLink(String link) {
-		if (link.contains(InternalUrlUtil.getInternalUrl())) {
+		if (InternalUrlUtil.isInternalUrl(link)) {
 			internalLinks.add(link);
 		} else {
 			externalLinks.add(link);

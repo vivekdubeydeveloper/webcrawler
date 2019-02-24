@@ -2,73 +2,59 @@ package com.code.webcrawler.service;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import com.code.webcrawler.model.WebCrawlerSummary;
 import com.code.webcrawler.model.WebPage;
+import com.code.webcrawler.util.PropertyKeyConstant;
+import com.code.webcrawler.util.PropertyReader;
 
+public class WebCrawlerImpl implements WebCrawlerService {
 
-public class WebCrawlerImpl {
-
-	private static int  counter=1;
-	Set<String> urlsSet=new HashSet<>();
+	private static int counter = 1;
+	Set<String> urlsSet = new HashSet<>();
+	HtmlProcessorService htmlProcessorService;
+	private static int maxPageToScan;
 	
-	public void extractData(String url) throws IOException {
-		
-		if(!urlsSet.contains(url)) {
+	public WebCrawlerImpl(HtmlProcessorService htmlProcessorService) {
+		this.htmlProcessorService = htmlProcessorService;
+		maxPageToScan=Integer.parseInt(PropertyReader.getProperty(PropertyKeyConstant.MAX_PAGE_TO_SCAN));
+	}
+
+
+
+	public void extractData(String url, WebCrawlerSummary webCrawlerSummary) throws IOException {
+
+		if (!urlsSet.contains(url)) {
 			urlsSet.add(url);
+			
 			counter++;
+			// create a container to keep data of this page
+			WebPage webPage = new WebPage();
+
 			//read html document
-			Document document = Jsoup.connect(url).get();
-			//find All the links on the page
-			Elements linksOnPage = document.select("a[href]");
-			WebPage webPage=new WebPage();
+			htmlProcessorService.readDocument(url);
 			
-			//Iterate over Each link
-			for (Element page : linksOnPage) {
-				//System.out.println("tag name "+page.tagName());
-				String link=page.attr("abs:href");
-				if(!link.equals("")) {
-					webPage.addLink(link);
-				}
-				
-				//getPageLinks(page.attr("abs:href"));
-			}
-			
-			//Elements images = document.select("img[src]");
-			Elements images = document.select("img");
-			for (Element page : images) {
-				//System.out.println("tag name "+page.tagName());
-				String img=page.attr("abs:src");
-				if(!img.equals("")) {
-					webPage.addImage(img);
-				}
-				
-				//getPageLinks(page.attr("abs:href"));
-			}
-			
-			
-			WebCrawlerSummary.addWebPage(url, webPage);
-			
-			linksOnPage = document.select("a[href]");
-			for (Element page : linksOnPage) {
-				String link=page.attr("abs:href");
-				if(!link.equals("")) {
-					extractData(link);
-					if(counter>10)
-						break;
-				}
-				
-				
-				
+			// find All the links on the page and add in web page
+			List<String> linkAttributes = htmlProcessorService.readHtmlElementsAttribute("a[href]", "abs:href");
+			linkAttributes.forEach(webPage::addLink);
+
+			// find All the Images on the page and in web page
+			List<String> imgAttributes = htmlProcessorService.readHtmlElementsAttribute("img", "abs:src");
+			imgAttributes.forEach(webPage::addImage);
+
+			// add Web page into summary
+			webCrawlerSummary.addWebPage(url, webPage);
+
+			for (String link : linkAttributes) {
+				extractData(link, webCrawlerSummary);
+				if (maxPageToScan!=0 && counter > maxPageToScan)
+					break;
 			}
 		}
-		
-		
+
 	}
+
+	
 }
