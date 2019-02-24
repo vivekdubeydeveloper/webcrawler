@@ -1,6 +1,7 @@
 package com.code.webcrawler;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
@@ -30,7 +31,9 @@ public class WebCrawlerApp {
 
 	public static void main(String[] args) {
 		logger.info("Entry");
+		long startTime=System.currentTimeMillis();
 		System.out.println("+++Process start+++++++++++++++++++++++++++++++++++++");
+		WebCrawlerSummary webCrawlerSummary=null;
 		try {
 
 			// initialize the process
@@ -40,42 +43,62 @@ public class WebCrawlerApp {
 			String url = readUserInputUrl();
 
 			if (!url.equalsIgnoreCase("exit")) {
-				System.out.println("Input URL for Crawling :" + url);
-				System.out.println("Please wait while process is running.............");
+				System.out.println("Crawling :" + url);
+				System.out.println("Please wait while process is running............."+LocalDateTime.now());
 
 				// Add base url in internal url list
 				InternalUrlUtil.addInternalUrlPatterns(url);
 
 				// set Domain Base Url and set Domain object into summary
-				WebCrawlerSummary webCrawlerSummary = getBeanForCrawlerData(url);
+				webCrawlerSummary = getBeanForCrawlerData(url);
 
 				// run the crawler and extract data
 				WebCrawlerService webcs = new WebCrawlerImpl(new HtmlProcessorImpl());
 				webcs.extractData(url, webCrawlerSummary);
-
-				// write data into json file
-				webCrawlerSummary.printSummary();
-				webCrawlerSummary.writeSummary();
-
-				// check log for summary
+				
 			} else {
 				System.out.println("You have choosen to exit from application.");
 			}
 
 		} catch (PropertyReadingException e) {
+			System.out.println("Exception in Process.See the log.");
 			logger.error("Error in property file reading : ", e);
 		} catch (IOException e) {
+			System.out.println("Exception in Process.See the log.");
 			logger.error("Error in process: ", e);
+		}catch (Throwable e) {
+			System.out.println("Exception in Process.See the log.");
+			logger.error("Error in process: ", e);
+		}finally {
+			
+			// write data into json file
+			if(null!=webCrawlerSummary) {
+				webCrawlerSummary.writeSummary();
+			}
 		}
+		
+		// check log for summary
+		System.out.println("check file "+PropertyReader.getProperty(PropertyKeyConstant.OUTPUT_FILE_PATH)+" for output");
+		System.out.println("Process Completed............."+LocalDateTime.now());
+		long endTime=System.currentTimeMillis();
+		System.out.println("Total Time taken by process=="+(endTime-startTime));
+		System.out.println("check log for details ");
 		System.out.println("+++Process End+++++++++++++++++++++++++++++++++++++");
+		logger.info("Total Time taken by process=="+(endTime-startTime));
 		logger.info("Exit");
 
 	}
 
 	private static void init() {
 		InternalUrlUtil.addInternalUrlPatterns(PropertyReader.getProperty(PropertyKeyConstant.INTERNAL_URLS));
+		URLValidatorUtil.addValidFormats(PropertyReader.getProperty(PropertyKeyConstant.IGNORE_FORMATS));
 	}
 
+	/**
+	 * Take Url input from user
+	 * 
+	 * @return url
+	 */
 	private static String readUserInputUrl() {
 		String url = "";
 		Scanner scanner = new Scanner(System.in);
@@ -96,6 +119,12 @@ public class WebCrawlerApp {
 		return url;
 	}
 
+	/**
+	 * create object for storing crawling result
+	 * 
+	 * @param url
+	 * @return WebCrawlerSummary
+	 */
 	private static WebCrawlerSummary getBeanForCrawlerData(String url) {
 		WebCrawlerSummary webCrawlerSummary = new WebCrawlerSummary();
 		Domain domain = new Domain(url);

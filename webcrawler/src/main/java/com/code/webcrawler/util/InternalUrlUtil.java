@@ -7,25 +7,25 @@ import java.util.List;
 /**
  * @author Vivek2.Dubey
  * 
- * This class will help in finding internal url
+ *         This class will help in finding internal url
  *
  */
 public class InternalUrlUtil {
-	
+
 	private static List<String> internalUrl = new ArrayList<String>();
 
 	/**
 	 * @param patterns
 	 * 
-	 * This method add url patterns to check internal url
+	 *            This method add url patterns to check internal url
 	 */
 	public static void addInternalUrlPatterns(String patterns) {
 		String[] pattern = patterns.split(",");
 		Arrays.stream(pattern).map(url -> {
-			url=url.replace("https://", "").replace("http://", "");
+			url = url.replace("https://", "").replace("http://", "");
 			int index = url.indexOf("/");
 			if (index != -1) {
-				url=url.substring(0,index);
+				url = url.substring(0, index);
 			}
 			return url;
 		}).filter(url -> !internalUrl.contains(url)).forEach(internalUrl::add);

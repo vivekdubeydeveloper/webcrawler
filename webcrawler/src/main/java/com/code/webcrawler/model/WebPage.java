@@ -6,11 +6,8 @@ import java.util.List;
 
 import com.code.webcrawler.util.InternalUrlUtil;
 
-public class WebPage implements Serializable{
+public class WebPage implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private List<String> internalLinks = new ArrayList<>();
 	private List<String> externalLinks = new ArrayList<>();
@@ -59,5 +56,4 @@ public class WebPage implements Serializable{
 				+ "]";
 	}
 
-	
 }
