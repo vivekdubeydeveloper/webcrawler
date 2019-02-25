@@ -13,3 +13,5 @@ http://www.prudential.co.uk
 .After the completion see the output json in output folder of step 6.It will process 5 links.
 
 10)For complete process Go to src->main-resource folder open application.properties change the value max.noofpage.crawl=0.Repeat step 9.
+
+Please read application.properties file comments for any extra configuaration.
