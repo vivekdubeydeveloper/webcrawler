@@ -19,7 +19,7 @@ import com.code.webcrawler.util.ApplicationUtil;
  */
 public class HtmlProcessorImpl implements HtmlProcessorService {
 
-	Document document;
+	private Document document;
 
 	/*
 	 * This method reads html elements from html document
@@ -64,5 +64,11 @@ public class HtmlProcessorImpl implements HtmlProcessorService {
 		// TODO Auto-generated method stub
 		document = Jsoup.connect(url).ignoreContentType(true).timeout(60000).get();
 	}
+
+	public Document getDocument() {
+		return document;
+	}
+	
+	
 
 }

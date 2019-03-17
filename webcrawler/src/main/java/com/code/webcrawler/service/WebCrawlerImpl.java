@@ -27,8 +27,8 @@ public class WebCrawlerImpl implements WebCrawlerService {
 	private final static Logger logger = Logger.getLogger(WebCrawlerImpl.class);
 
 	private static int counter = 1;
-	Set<String> urlsSet = new HashSet<>();
-	HtmlProcessorService htmlProcessorService;
+	private Set<String> urlsSet = new HashSet<>();
+	private HtmlProcessorService htmlProcessorService;
 	private static int maxPageToScan;
 
 	public WebCrawlerImpl(HtmlProcessorService htmlProcessorService) {

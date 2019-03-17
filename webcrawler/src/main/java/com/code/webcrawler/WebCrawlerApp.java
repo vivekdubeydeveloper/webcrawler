@@ -28,34 +28,45 @@ import com.code.webcrawler.util.URLValidatorUtil;
 public class WebCrawlerApp {
 
 	private final static Logger logger = Logger.getLogger(WebCrawlerApp.class);
+	private WebCrawlerSummary webCrawlerSummary = null;
+	private String url = null;
 
 	public static void main(String[] args) {
+		WebCrawlerApp webCrawlerApp = new WebCrawlerApp();
+
+		// take url from user input
+		webCrawlerApp.readUserInputUrl();
+
+		webCrawlerApp.startProcess();
+	}
+
+	/**
+	 * This method will start the application
+	 */
+	public void startProcess() {
 		logger.info("Entry");
-		long startTime=System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		System.out.println("+++Process start+++++++++++++++++++++++++++++++++++++");
-		WebCrawlerSummary webCrawlerSummary=null;
+
 		try {
 
 			// initialize the process
 			init();
 
-			//take url from user input
-			String url = readUserInputUrl();
-
 			if (!url.equalsIgnoreCase("exit")) {
 				System.out.println("Crawling :" + url);
-				System.out.println("Please wait while process is running............."+LocalDateTime.now());
+				System.out.println("Please wait while process is running............." + LocalDateTime.now());
 
 				// Add base url in internal url list
 				InternalUrlUtil.addInternalUrlPatterns(url);
 
 				// set Domain Base Url and set Domain object into summary
-				webCrawlerSummary = getBeanForCrawlerData(url);
+				createBeanForCrawlerData();
 
 				// run the crawler and extract data
 				WebCrawlerService webcs = new WebCrawlerImpl(new HtmlProcessorImpl());
 				webcs.extractData(url, webCrawlerSummary);
-				
+
 			} else {
 				System.out.println("You have choosen to exit from application.");
 			}
@@ -66,27 +77,27 @@ public class WebCrawlerApp {
 		} catch (IOException e) {
 			System.out.println("Exception in Process.See the log.");
 			logger.error("Error in process: ", e);
-		}catch (Throwable e) {
+		} catch (Throwable e) {
 			System.out.println("Exception in Process.See the log.");
 			logger.error("Error in process: ", e);
-		}finally {
-			
+		} finally {
+
 			// write data into json file
-			if(null!=webCrawlerSummary) {
+			if (null != webCrawlerSummary) {
 				webCrawlerSummary.writeSummary();
 			}
 		}
-		
+
 		// check log for summary
-		System.out.println("check file "+PropertyReader.getProperty(PropertyKeyConstant.OUTPUT_FILE_PATH)+" for output");
-		System.out.println("Process Completed............."+LocalDateTime.now());
-		long endTime=System.currentTimeMillis();
-		System.out.println("Total Time taken by process=="+(endTime-startTime));
+		System.out.println(
+				"check file " + PropertyReader.getProperty(PropertyKeyConstant.OUTPUT_FILE_PATH) + " for output");
+		System.out.println("Process Completed............." + LocalDateTime.now());
+		long endTime = System.currentTimeMillis();
+		System.out.println("Total Time taken by process==" + (endTime - startTime));
 		System.out.println("check log for details ");
 		System.out.println("+++Process End+++++++++++++++++++++++++++++++++++++");
-		logger.info("Total Time taken by process=="+(endTime-startTime));
+		logger.info("Total Time taken by process==" + (endTime - startTime));
 		logger.info("Exit");
-
 	}
 
 	private static void init() {
@@ -99,8 +110,7 @@ public class WebCrawlerApp {
 	 * 
 	 * @return url
 	 */
-	private static String readUserInputUrl() {
-		String url = "";
+	public void readUserInputUrl() {
 		Scanner scanner = new Scanner(System.in);
 
 		while (true) {
@@ -115,20 +125,25 @@ public class WebCrawlerApp {
 		}
 
 		scanner.close();
-
-		return url;
 	}
 
 	/**
 	 * create object for storing crawling result
 	 * 
 	 * @param url
-	 * @return WebCrawlerSummary
 	 */
-	private static WebCrawlerSummary getBeanForCrawlerData(String url) {
-		WebCrawlerSummary webCrawlerSummary = new WebCrawlerSummary();
+	private void createBeanForCrawlerData() {
+		webCrawlerSummary = new WebCrawlerSummary();
 		Domain domain = new Domain(url);
 		webCrawlerSummary.addDomain(domain);
+	}
+
+	public WebCrawlerSummary getWebCrawlerSummary() {
 		return webCrawlerSummary;
 	}
+
+	public String getUrl() {
+		return url;
+	}
+
 }

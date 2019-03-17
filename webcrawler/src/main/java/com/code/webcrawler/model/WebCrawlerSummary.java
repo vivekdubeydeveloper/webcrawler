@@ -1,5 +1,6 @@
 package com.code.webcrawler.model;
 
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class WebCrawlerSummary implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Domain domain;
 	private Map<String, WebPage> crawlingSummaryMap = new HashMap<>();
-	Set<String> errorUrl = new HashSet<>();
+	private Set<String> errorUrl = new HashSet<>();
 
 	public void addDomain(Domain domain) {
 		this.domain = domain;
