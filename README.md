@@ -14,6 +14,10 @@ http://www.prudential.co.uk
 
 10)For complete process Go to src->main-resource folder open application.properties change the value max.noofpage.crawl=0.Repeat step 9.
 
+11)I have covered general test cases for Webcrawler application.For running test cases Junit jar should be in build path.
+Right click on WebCrawlerAppTest and run as Junit test.(For details read comments in class).See result in Junit tab.
+
+
 Please read application.properties file comments for any extra configuaration.
 
 Possible Improvements(if get more time):
